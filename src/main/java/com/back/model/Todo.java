@@ -42,4 +42,9 @@ public class Todo {
     public void toggleCompleted() {
         this.completed = !this.completed;
     }
+
+    public void update(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
 }

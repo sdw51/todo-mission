@@ -2,6 +2,7 @@ package com.back.service;
 
 import com.back.dto.TodoCreateRequestDto;
 import com.back.dto.TodoResponseDto;
+import com.back.dto.TodoUpdateDto;
 import com.back.model.Todo;
 import com.back.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,19 @@ public class TodoService {
                 .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
 
         todo.toggleCompleted();
+
+        return new TodoResponseDto(todo);
+    }
+
+    @Transactional
+    public TodoResponseDto updateTodo(Long id, TodoUpdateDto updateDto) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+
+        todo.update(
+                updateDto.getTitle(),
+                updateDto.getDescription()
+        );
 
         return new TodoResponseDto(todo);
     }

@@ -2,6 +2,7 @@ package com.back.controller;
 
 import com.back.dto.TodoCreateRequestDto;
 import com.back.dto.TodoResponseDto;
+import com.back.dto.TodoUpdateDto;
 import com.back.service.TodoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,16 @@ public class TodoController {
         TodoResponseDto responseDto = todoService.toggleTodoCompleted(id);
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    //Todo 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<TodoResponseDto> updateTodo(
+            @PathVariable Long id,
+            @Valid@RequestBody TodoUpdateDto updateDto
+    ) {
+        TodoResponseDto updateTodo = todoService.updateTodo(id, updateDto);
+
+        return ResponseEntity.ok(updateTodo);
     }
 }
