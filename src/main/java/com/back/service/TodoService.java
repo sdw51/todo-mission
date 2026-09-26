@@ -6,8 +6,10 @@ import com.back.dto.TodoUpdateDto;
 import com.back.model.Todo;
 import com.back.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,7 +32,10 @@ public class TodoService {
     @Transactional
     public TodoResponseDto toggleTodoCompleted(Long id) {
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Todo를 찾을 수 없습니다."
+                ));
 
         todo.toggleCompleted();
 
@@ -40,7 +45,10 @@ public class TodoService {
     @Transactional
     public TodoResponseDto updateTodo(Long id, TodoUpdateDto updateDto) {
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Todo를 찾을 수 없습니다."
+                ));
 
         todo.update(
                 updateDto.getTitle(),
@@ -53,7 +61,10 @@ public class TodoService {
     @Transactional
     public void deleteTodo(Long id) {
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Todo를 찾을 수 없습니다."
+                ));
 
         todoRepository.delete(todo);
     }
@@ -69,7 +80,10 @@ public class TodoService {
     @Transactional(readOnly = true)
     public TodoResponseDto getTodo(Long id) {
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Todo를 찾을 수 없습니다."
+                ));
 
         return new TodoResponseDto(todo);
     }
