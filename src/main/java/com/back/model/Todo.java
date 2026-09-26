@@ -38,4 +38,8 @@ public class Todo {
         this.title = title;
         this.description = description;
     }
+
+    public void toggleCompleted() {
+        this.completed = !this.completed;
+    }
 }

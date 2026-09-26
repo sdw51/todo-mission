@@ -6,6 +6,7 @@ import com.back.model.Todo;
 import com.back.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,15 @@ public class TodoService {
         Todo savedTodo = todoRepository.save(todo);
 
         return new TodoResponseDto(savedTodo);
+    }
+
+    @Transactional
+    public TodoResponseDto toggleTodoCompleted(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+
+        todo.toggleCompleted();
+
+        return new TodoResponseDto(todo);
     }
 }
