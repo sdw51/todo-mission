@@ -50,4 +50,14 @@ public class TodoController {
 
         return ResponseEntity.ok(updateTodo);
     }
+
+    //Todo 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTodo(
+            @PathVariable Long id
+    ) {
+        todoService.deleteTodo(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

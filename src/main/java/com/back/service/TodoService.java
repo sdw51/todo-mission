@@ -47,4 +47,12 @@ public class TodoService {
 
         return new TodoResponseDto(todo);
     }
+
+    @Transactional
+    public void deleteTodo(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+
+        todoRepository.delete(todo);
+    }
 }
