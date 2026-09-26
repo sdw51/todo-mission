@@ -1,0 +1,7 @@
+POST http://localhost:8080/v1/todos
+Content-Type: application/json
+
+{
+  "title": "test1",
+  "description": "Todo 생성 API 테스트"
+}

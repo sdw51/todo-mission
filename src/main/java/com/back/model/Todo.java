@@ -33,4 +33,9 @@ public class Todo {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public Todo(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
 }
