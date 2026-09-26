@@ -49,14 +49,14 @@ Todo 응답 본문:
 {"id":1,"title":"test1","description":"Todo API test","completed":false,"createdAt":"2026-09-27T04:44:38.842359","updatedAt":"2026-09-27T04:44:38.842359"}
 ```
 
-오류 응답은 `{"status":400,"message":"제목을 입력해주세요"}` 형태입니다. 생성·수정의 검증 실패는 HTTP 400입니다. ID를 사용하는 API에서 Todo가 없으면 본문은 `status: 404`이지만, **현재 예외 처리기의 `badRequest()` 때문에 실제 HTTP 상태는 400**입니다. 등록되지 않은 주소는 Spring Boot 기본 오류 응답으로 HTTP 404를 반환합니다.
+입력값 검증 실패와 Todo 미존재 오류는 `status`, `message` 형식으로 반환합니다. 생성·수정의 검증 실패는 HTTP 400, 단일 조회·수정·삭제·완료 상태 전환 시 Todo가 없으면 HTTP 404를 반환합니다.
 
 ## 3. 설계 설명
 
 - `/v1/todos`는 API 버전과 할 일 컬렉션을, `/{id}`는 개별 할 일을 나타냅니다. 동작은 HTTP 메서드로 구분합니다.
 - PUT은 제목·설명을 교체하고, PATCH는 완료 상태만 변경하는 데 사용합니다.
 - 생성은 새 리소스가 생기므로 201, 조회·수정은 결과를 반환하므로 200, 삭제는 응답 본문이 필요 없어 204를 사용합니다.
-- 잘못된 입력은 400, 없는 리소스는 404로 구분하는 설계입니다. Todo 미존재 처리의 HTTP 상태는 위에 적은 대로 수정이 필요합니다.
+- 잘못된 입력은 400, 존재하지 않는 Todo는 404로 구분하며 전역 예외 처리기에서 상태 코드와 오류 메시지를 반환합니다.
 - H2는 별도 서버 없이 실행할 수 있어 과제 실행과 API 확인이 간편합니다. 인메모리 방식이라 영구 저장에는 적합하지 않습니다.
 
 ## 4. 실행 결과
@@ -129,24 +129,14 @@ HTTP/1.1 400 Bad Request
 {"status":400,"message":"제목을 입력해주세요"}
 ```
 
-### ⑥ 존재하지 않는 주소 → 404
+### ⑥ 존재하지 않는 Todo 조회 → 404
 
 ```http
-GET http://localhost:8080/v1/unknown
+GET http://localhost:8080/v1/todos/1
 ```
 
 ```http
 HTTP/1.1 404 Not Found
-
-{"timestamp":"2026-09-26T19:44:39.061Z","status":404,"error":"Not Found","message":"No static resource v1/unknown.","path":"/v1/unknown"}
-```
-
-위 응답은 긴 `trace` 필드만 생략했습니다.
-
-참고로 삭제한 Todo를 `GET /v1/todos/1`로 조회한 실제 결과는 아래와 같습니다. Todo 미존재의 HTTP 404 사례는 아직 충족하지 않습니다.
-
-```http
-HTTP/1.1 400 Bad Request
 
 {"status":404,"message":"Todo를 찾을 수 없습니다."}
 ```
