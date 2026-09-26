@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TodoService {
@@ -54,5 +56,21 @@ public class TodoService {
                 .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
 
         todoRepository.delete(todo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TodoResponseDto> getAllTodos() {
+        return todoRepository.findAll()
+                .stream()
+                .map(TodoResponseDto::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TodoResponseDto getTodo(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Todo를 찾을 수 없습니다."));
+
+        return new TodoResponseDto(todo);
     }
 }

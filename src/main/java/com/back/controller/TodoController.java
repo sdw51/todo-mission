@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/todos")
@@ -59,5 +61,23 @@ public class TodoController {
         todoService.deleteTodo(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    //전체조회
+    @GetMapping
+    public ResponseEntity<List<TodoResponseDto>> getAllTodos() {
+        List<TodoResponseDto> todos = todoService.getAllTodos();
+
+        return ResponseEntity.ok(todos);
+    }
+
+    //단일조회
+    @GetMapping("/{id}")
+    public ResponseEntity<TodoResponseDto> getTodo(
+            @PathVariable Long id
+    ) {
+        TodoResponseDto todo = todoService.getTodo(id);
+
+        return ResponseEntity.ok(todo);
     }
 }
